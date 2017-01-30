@@ -47,9 +47,8 @@ public class Room_Catacombs extends Room {
 		entityList.add(new Foul(TILE*41, TILE*21));
 		
 		if (Main.hardMode){
-			entityList.add(new Foul(TILE*41, TILE*52));
-			entityList.add(new Foul(TILE*44, TILE*52));
-			entityList.add(new Foul(TILE*44, TILE*47));
+			entityList.add(new Foul(TILE*41, TILE*35));
+			entityList.add(new Foul(TILE*45, TILE*35));
 			
 			entityList.add(new Foul(TILE*27, TILE*17));
 			entityList.add(new Foul(TILE*29, TILE*17));

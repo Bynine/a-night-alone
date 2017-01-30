@@ -119,7 +119,7 @@ public abstract class Monster extends Entity{
 		}
 	}
 	
-	private void speedMod(){
+	protected void speedMod(){
 		if (buttTouch) speedMultiplier = (float) (.5 + (Math.random()*2)/3);
 		else speedMultiplier = (float) (0.875 + Math.random()/4);
 	}

@@ -15,13 +15,14 @@ import com.badlogic.gdx.math.Vector2;
 import nw.Timer;
 
 public class Player extends Entity{
+	
+	Main nw;
 
 	private float health = 3;
 	public final float MAXHEALTH = 3;
 	private final float recovery = 0.0025f;
 	private Timer invincible = new Timer(30, false);
-	private Timer jumpTimer = new Timer(5, false);
-	Main nw;
+	private Timer jumpTimer = new Timer(6, false);
 	private Sound hurtNoise = Gdx.audio.newSound(Gdx.files.internal("sfx/hurt.wav"));
 	private Sound landNoise = Gdx.audio.newSound(Gdx.files.internal("sfx/land4.wav"));
 	private float deadZone = .5f;
@@ -129,10 +130,6 @@ public class Player extends Entity{
 			health -= damage;
 			invincible.restart();
 		}
-	}
-
-	public void heal() {
-		if (health < MAXHEALTH) health++;
 	}
 
 	public void reset(){

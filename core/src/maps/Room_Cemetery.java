@@ -55,7 +55,7 @@ public class Room_Cemetery extends Room {
 		entityList.add(new Portal(TILE*154, TILE*41, superLevel.getRoom(6), TILE*4, TILE*6));
 		
 		if (Main.hardMode){
-			entityList.add(new Zombie(TILE*12, TILE*41));
+			entityList.add(new Zombie(TILE*14, TILE*41));
 			entityList.add(new Slime(TILE*26, TILE*41));
 			entityList.add(new Slime(TILE*28, TILE*41));
 			entityList.add(new Slime(TILE*32, TILE*41));

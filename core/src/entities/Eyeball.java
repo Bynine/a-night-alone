@@ -44,6 +44,11 @@ public class Eyeball extends Monster{
 	public void reactToPlayer(Player p){
 		/* doesn't turn */
 	}
+	
+	@Override
+	protected void speedMod(){
+		/* speed don't mod*/
+	}
 
 	@Override
 	public void updatePosition(float f, Player p){		

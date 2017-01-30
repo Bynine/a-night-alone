@@ -17,7 +17,7 @@ public class Foul extends Monster {
 		
 		if (Main.hardMode){
 			radius = radius * 8;
-			airSpeed = 1.2f;
+			airSpeed = 1.28f;
 			airSpeed += (.5f + Math.random())/10;
 			jumpTimer.setTime(8);
 			stunTimer.setTime(60);

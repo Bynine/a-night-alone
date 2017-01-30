@@ -17,6 +17,7 @@ public class Dog extends Monster {
 		stunTimer.setTime(80);
 		
 		if (Main.hardMode){
+			setup("sprites/doghard.PNG", "sprites/dogstunhard.PNG");
 			walk.setFrameDuration(6);
 			airSpeed = 3.6f;
 			airSpeed += (.5f + Math.random())/10;

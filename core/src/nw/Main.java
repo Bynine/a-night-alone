@@ -41,9 +41,9 @@ import cutscenes.Cutscene_Intro;
 public class Main extends ApplicationAdapter implements InputProcessor, ControllerListener {
 
 	/* DEBUG */
-	private final int startRoom = 6; // FINAL: 0
+	private final int startRoom = 3; // FINAL: 0
 	public static boolean gotCat = false; // FINAL: false
-	public static boolean hardMode = false; // FINAL: false
+	public static boolean hardMode = true; // FINAL: false
 	public final boolean mode_DEBUG = true; // FINAL: false
 	/* GRAPHICS */
 	private SpriteBatch batch;
