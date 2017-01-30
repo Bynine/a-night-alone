@@ -10,7 +10,7 @@ public class Slime extends Monster {
 		airSpeed = 0.2f;
 		airSpeed += (.25f + Math.random())/15;
 		jumpStrength = 0;
-		damage = 0.6f;
+		damage = 0.75f;
 		jumpTimer.setTime(60);
 		stunTimer.setTime(120);
 

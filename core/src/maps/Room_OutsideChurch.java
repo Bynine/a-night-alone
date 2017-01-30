@@ -39,15 +39,15 @@ public class Room_OutsideChurch extends Room {
 			entityList.add(new Slime(TILE*32, TILE*13));
 			entityList.add(new Slime(TILE*35, TILE*13));
 			entityList.add(new Slime(TILE*39, TILE*13));
-			entityList.add(new Zombie(TILE*64, TILE*20));
-			entityList.add(new Slime(TILE*60, TILE*20));
-			entityList.add(new Zombie(TILE*68, TILE*23));
+			entityList.add(new Zombie(TILE*62, TILE*20));
+			entityList.add(new Slime(TILE*59, TILE*20));
+			entityList.add(new Zombie(TILE*65, TILE*23));
 		}
 		
 		Monster statue = new Statue(TILE*48, TILE*14);
 		statue.flip();
 		entityList.add(statue);
-		entityList.add(new Portal(0, TILE*13, superLevel.getRoom(1), TILE*151, TILE*41));
+		entityList.add(new Portal(0, TILE*13, superLevel.getRoom(6), TILE*48, TILE*26));
 		entityList.add(new Portal(TILE*69, TILE*13, superLevel.getRoom(3), TILE*4, TILE*15));
 		entityList.add(new Breakable(TILE*22, TILE*13));
 		entityList.add(new Breakable(TILE*33, TILE*13));

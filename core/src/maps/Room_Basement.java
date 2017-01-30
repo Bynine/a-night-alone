@@ -47,8 +47,8 @@ public class Room_Basement extends Room {
 			entityList.add(new Slime(TILE*25, TILE*(groundFloor+7)));
 			entityList.add(new Slime(TILE*31, TILE*(groundFloor+6)));
 			entityList.add(new Slime(TILE*50, TILE*(groundFloor+10)));
-			entityList.add(new Foul(TILE*58, TILE*(groundFloor-5)));
-			entityList.add(new Foul(TILE*51, TILE*(groundFloor-5)));
+			entityList.add(new Foul(TILE*52, TILE*(groundFloor-5)));
+			entityList.add(new Foul(TILE*47, TILE*(groundFloor-6)));
 		}
 		
 		entityList.add(new Portal(TILE*6, TILE*ceiling, superLevel.getRoom(3), TILE*7, TILE*21));

@@ -41,10 +41,10 @@ import cutscenes.Cutscene_Intro;
 public class Main extends ApplicationAdapter implements InputProcessor, ControllerListener {
 
 	/* DEBUG */
-	private final int startRoom = 0; // FINAL: 0
+	private final int startRoom = 6; // FINAL: 0
 	public static boolean gotCat = false; // FINAL: false
 	public static boolean hardMode = false; // FINAL: false
-	public final boolean mode_DEBUG = false; // FINAL: false
+	public final boolean mode_DEBUG = true; // FINAL: false
 	/* GRAPHICS */
 	private SpriteBatch batch;
 	private Player player;
@@ -54,9 +54,9 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	private OrthogonalTiledMapRenderer renderer;
 	Texture border, bigBorder, tint, clouds, eye, pupil, pupilShader,
 	dead, deadleft, keyboardControls, controllerControls, pressJumpToBegin, nextButton,
-	shredBase, shred1, shred2, shred3, shred4, credits;
+	shredBase, shred1, shred2, shred3, shred4, credits, creditsHard;
 	TextureRegion bossBorder, creditPet;
-	Animation bossAnim, creditPet1, creditPet2;
+	Animation bossAnim, creditPetEasy, creditPetHard;
 	private final float blackR = (float)21/255;
 	private final float blackG = (float)34/255;
 	private final float blackB = (float)43/255;
@@ -101,8 +101,8 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 
 	@Override public void create () {
 		bossAnim = Entity.makeAnimation("sprites/bossbordersheet.PNG", 4, 1, 10f, PlayMode.LOOP);
-		creditPet1 = Entity.makeAnimation("sprites/ending pet 1.PNG", 2, 1, 20f, PlayMode.LOOP);
-		creditPet2 = Entity.makeAnimation("sprites/ending pet 2.PNG", 2, 1, 20f, PlayMode.LOOP);
+		creditPetEasy = Entity.makeAnimation("sprites/ending pet 1.PNG", 2, 1, 20f, PlayMode.LOOP);
+		creditPetHard = Entity.makeAnimation("sprites/ending pet 2.PNG", 2, 1, 20f, PlayMode.LOOP);
 
 		border = new Texture(Gdx.files.internal("sprites/border.PNG"));
 		bigBorder = new Texture(Gdx.files.internal("sprites/bigborder.PNG"));
@@ -118,6 +118,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		pressJumpToBegin = new Texture(Gdx.files.internal("scenes/pressjumptobegin.PNG")); 
 		nextButton = new Texture(Gdx.files.internal("sprites/nextarrow.PNG"));
 		credits = new Texture(Gdx.files.internal("sprites/credits.PNG"));
+		creditsHard = new Texture(Gdx.files.internal("sprites/creditshard.PNG"));
 		shredBase = new Texture(Gdx.files.internal("scenes/scrapbase.PNG"));
 		shred1 = new Texture(Gdx.files.internal("scenes/scrap1.PNG"));
 		shred2 = new Texture(Gdx.files.internal("scenes/scrap2.PNG"));
@@ -125,7 +126,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		shred4 = new Texture(Gdx.files.internal("scenes/scrap4.PNG"));
 
 		bossBorder = new Sprite(bossAnim.getKeyFrame(0));
-		creditPet = new Sprite(creditPet1.getKeyFrame(0));
+		creditPet = new Sprite(creditPetEasy.getKeyFrame(0));
 
 		heartBeat = Gdx.audio.newMusic(Gdx.files.internal("music/heartbeat reverb.mp3"));
 		heartBeat.setLooping(true);
@@ -255,15 +256,26 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	boolean creditsStarted = false;
 
 	void renderCredits(){
-		batch.begin();
+		
 		if (!creditsStarted) {
 			creditPosX = lowerLeftX();
 			creditsStarted = true;
 		}
-		if (hardMode) batch.draw(creditPet2.getKeyFrame(deltaTime), lowerLeftX() - TILE*2 + SCREENWIDTH*ZOOM/2 - creditPet.getRegionWidth()/2, lowerLeftY() + TILE*7);
-		else batch.draw(creditPet1.getKeyFrame(deltaTime), lowerLeftX() - TILE*2 + SCREENWIDTH*ZOOM/2 - creditPet.getRegionWidth()/2, lowerLeftY() + TILE*7);
+		
 		creditPosX = MathUtils.clamp(creditPosX -= creditSpeed, -(credits.getWidth()) + lowerLeftX() + TILE*15, lowerLeftX()); 
-		batch.draw(credits, creditPosX, lowerLeftY());
+		batch.begin();
+		
+		if (hardMode) {
+			batch.draw(creditPetHard.getKeyFrame(deltaTime), 
+					lowerLeftX() - TILE*2 + SCREENWIDTH*ZOOM/2 - creditPet.getRegionWidth()/2, lowerLeftY() + TILE*7);
+			batch.draw(creditsHard, creditPosX, lowerLeftY());
+		}
+		
+		else {
+			batch.draw(creditPetEasy.getKeyFrame(deltaTime), 
+					lowerLeftX() - TILE*2 + SCREENWIDTH*ZOOM/2 - creditPet.getRegionWidth()/2, lowerLeftY() + TILE*7);
+			batch.draw(credits, creditPosX, lowerLeftY());
+		}
 		batch.end();
 		renderBorder(true);
 	}

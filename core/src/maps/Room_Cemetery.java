@@ -31,6 +31,7 @@ public class Room_Cemetery extends Room {
 		if (notCat()) entityList.add(new Cat(TILE*5, TILE*43));
 		if (!Main.gotShred2 && !Main.hardMode) entityList.add(new Shred(TILE*47, TILE*43, 2));
 		if (!Main.gotShred4 && !Main.hardMode) entityList.add(new Shred(TILE*72, TILE*48, 4));
+		
 		entityList.add(new Slime(TILE*20, TILE*41));
 		entityList.add(new Zombie(TILE*27, TILE*27));
 		entityList.add(new Zombie(TILE*23, TILE*27));
@@ -45,11 +46,13 @@ public class Room_Cemetery extends Room {
 		entityList.add(new Zombie(TILE*126, TILE*41));
 		entityList.add(new Zombie(TILE*128, TILE*41));
 		entityList.add(new Zombie(TILE*135, TILE*41));
-		entityList.add(new Zombie(TILE*141, TILE*41));
+		entityList.add(new Zombie(TILE*139, TILE*41));
+		
 		entityList.add(new Breakable(TILE*72, TILE*44));
 		entityList.add(new Breakable(TILE*79, TILE*44));
+		
 		entityList.add(new Portal(0, TILE*43, superLevel.getRoom(0), TILE*67, TILE*13));
-		entityList.add(new Portal(TILE*154, TILE*41, superLevel.getRoom(2), TILE*3, TILE*13));
+		entityList.add(new Portal(TILE*154, TILE*41, superLevel.getRoom(6), TILE*4, TILE*6));
 		
 		if (Main.hardMode){
 			entityList.add(new Zombie(TILE*12, TILE*41));
