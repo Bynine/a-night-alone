@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 import entities.Foul;
+import entities.Ghost;
 import entities.Player;
 import entities.Portal;
 import entities.Slime;
@@ -52,10 +53,11 @@ public class Room_Catacombs extends Room {
 			
 			entityList.add(new Foul(TILE*27, TILE*17));
 			entityList.add(new Foul(TILE*29, TILE*17));
-			entityList.add(new Foul(TILE*45, TILE*5));
-			entityList.add(new Foul(TILE*50, TILE*5));
+//			entityList.add(new Foul(TILE*45, TILE*5));
+//			entityList.add(new Foul(TILE*50, TILE*5));
 			entityList.add(new Slime(TILE*11, TILE*8));
 			entityList.add(new Slime(TILE*13, TILE*8));
+//			entityList.add(new Ghost(TILE*30, TILE*30));
 			entityList.add(new Unbreakable(TILE*6, TILE*14));
 			entityList.add(new Unbreakable(TILE*7, TILE*14));
 		}

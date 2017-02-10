@@ -49,7 +49,7 @@ public abstract class Entity {
 		handleTouch(entityList);
 		updateTimers();
 		updatePosition(f, p);
-		updateImage();
+		updateImage(deltaTime);
 	}
 
 	protected void handleDirection(float f){
@@ -76,7 +76,7 @@ public abstract class Entity {
 		position.y += velocity.y;
 	}
 
-	protected void updateImage(){
+	protected void updateImage(int deltaTime){
 		image.setX(position.x);
 		image.setY(position.y);
 	}
@@ -220,7 +220,7 @@ public abstract class Entity {
 	public float getFriction() { return friction; }
 
 	public enum Direction{ LEFT, RIGHT }
-	public enum State{ STAND, RUN, AIR }
+	public enum State{ STAND, RUN, AIR, CROUCH }
 	enum Collision{ SOLID, CREATURE, GHOST }
 
 	private final ArrayList<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.RUN)); 

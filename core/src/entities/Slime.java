@@ -15,10 +15,10 @@ public class Slime extends Monster {
 		stunTimer.setTime(120);
 
 		if (Main.hardMode){
-			//setup("sprites/slimehard.PNG", "sprites/slimestunhard.PNG");
-			damage = 0.75f;
-			airSpeed = 0.3f;
-			airSpeed += (.25f + Math.random())/15;
+			setup("sprites/slimehard.PNG", "sprites/slimestunhard.PNG");
+			damage = 0.78f;
+			airSpeed = 0.4f;
+			airSpeed += (.5f + Math.random())/10;
 		}
 	}
 

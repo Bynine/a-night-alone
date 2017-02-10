@@ -28,6 +28,7 @@ public abstract class Monster extends Entity{
 	private int buttTouchCounter = 0;
 	protected float damage = 0;
 	private float jumpSensitivity = .5f;
+	protected int touchRadius = 4;
 	private boolean buttTouch = false;
 	protected Animation walk;
 	private Sound stunNoise = Gdx.audio.newSound(Gdx.files.internal("sfx/break4.wav"));
@@ -106,7 +107,7 @@ public abstract class Monster extends Entity{
 			}
 		}
 		if (stunTimer.timeUp() && e instanceof Player) {
-			if (isTouching(e, 4)){
+			if (isTouching(e, touchRadius)){
 				Player p = (Player) e;
 				p.hurt(damage, this);
 			}

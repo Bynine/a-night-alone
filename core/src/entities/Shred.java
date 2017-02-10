@@ -14,13 +14,13 @@ import nw.Main;
 public class Shred extends Entity{
 
 	private final int num;
-	private Sound collect = Gdx.audio.newSound(Gdx.files.internal("sfx/collect.wav"));
+	private Sound collect = Gdx.audio.newSound(Gdx.files.internal("sfx/collect2.wav"));
 	protected Animation anim = makeAnimation("sprites/shred.PNG", 2, 1, 20f, PlayMode.LOOP);
 
 	public Shred(float posX, float posY, int num) {
 		super(posX, posY);
 		image = new Sprite(anim.getKeyFrame(0));
-		updateImage();
+		updateImage(0);
 		this.num = num;
 	}
 
@@ -39,7 +39,7 @@ public class Shred extends Entity{
 		if (e instanceof Player && isTouching(e, 2)) {
 			Main.setShred(num);
 			setRemove();
-			collect.play(0);
+			collect.play(0.5f);
 		}
 	}
 

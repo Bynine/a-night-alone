@@ -9,11 +9,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import entities.*;
 
 public class Room_OutsideHouse extends Room{
-	
+
 	int baseLevel = 17;
 	Cat c = new Cat(TILE*28, TILE*baseLevel);
 	int makeCat = 3;
-	
+
 	public Room_OutsideHouse(Level superLevel) {
 		super(superLevel);
 		startPosition.x = TILE * 26;
@@ -22,19 +22,24 @@ public class Room_OutsideHouse extends Room{
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/empty.mp3"));
 		clouds = true;
 	}
-	
+
 	@Override
 	public void initEntities(Player player) {
 		super.initEntities(player);
-		if (!Main.gotShred1 && !Main.hardMode) entityList.add(new Shred(TILE*3, TILE*(baseLevel + 3), 1));
 		if (notCat()) {
 			entityList.add(c);
 			makeCat--;
 		}
-		entityList.add(new HardModeActivator(TILE*28, TILE*(baseLevel+5)));
-		entityList.add(new Breakable(TILE*61, TILE*(baseLevel-4) ));
+
+		if (!Main.hardMode){
+			entityList.add(new HardModeActivator(TILE*28, TILE*(baseLevel+5)));
+		}
+
+		Breakable b = new Breakable(TILE*61, TILE*(baseLevel-4));
+		b.noGhosts();
+		entityList.add(b);
 		entityList.add(new Portal(TILE*69, TILE*(baseLevel-3), superLevel.getRoom(1), TILE*2, TILE*43));
-		
+
 		if (Main.gotCat){
 			Portal homeSweetHome = new Portal(TILE*25, TILE*(baseLevel), superLevel.getRoom(0), TILE*26, TILE*baseLevel);
 			homeSweetHome.doesCutscene();
@@ -42,7 +47,7 @@ public class Room_OutsideHouse extends Room{
 			entityList.add(homeSweetHome);
 		}
 	}
-	
+
 	@Override
 	public void update(){
 		super.update();
@@ -51,5 +56,5 @@ public class Room_OutsideHouse extends Room{
 			makeCat--;
 		}
 	}
-	
+
 }

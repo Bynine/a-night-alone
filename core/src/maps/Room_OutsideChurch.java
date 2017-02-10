@@ -51,8 +51,13 @@ public class Room_OutsideChurch extends Room {
 		entityList.add(statue);
 		entityList.add(new Portal(0, TILE*13, superLevel.getRoom(6), TILE*48, TILE*26));
 		entityList.add(new Portal(TILE*69, TILE*13, superLevel.getRoom(3), TILE*4, TILE*15));
+		entityList.add(new Breakable(TILE*15, TILE*13));
+		entityList.add(new Breakable(TILE*19, TILE*13));
 		entityList.add(new Breakable(TILE*22, TILE*13));
+		entityList.add(new Breakable(TILE*26, TILE*13));
+		entityList.add(new Breakable(TILE*29, TILE*13));
 		entityList.add(new Breakable(TILE*33, TILE*13));
 		entityList.add(new Breakable(TILE*36, TILE*13));
+		entityList.add(new Breakable(TILE*40, TILE*13));
 	}
 }

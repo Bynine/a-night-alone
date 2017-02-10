@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class HardModeActivator extends Entity{
 
-	private Timer wait = new Timer(180, true);
+	private Timer wait = new Timer(140, true);
 	private Sound unlock = Gdx.audio.newSound(Gdx.files.internal("sfx/collect.wav")); // TODO: unlock SFX
 	private boolean unlocked = false;
 

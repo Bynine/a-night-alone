@@ -14,7 +14,7 @@ import nw.Timer;
 public class Projectile extends Entity {
 
 	int dir;
-	Timer life = new Timer(60, true);
+	Timer life = new Timer(120, true);
 	float speed = 2.75f;
 	private Sound land = Gdx.audio.newSound(Gdx.files.internal("sfx/rock.wav"));
 	TextureRegion chunkTexture = new TextureRegion();
@@ -34,6 +34,7 @@ public class Projectile extends Entity {
 		float verticalAdd = MathUtils.clamp(p.getVelocity().y/4, 0, 0.5f);
 		velocity.y = 0.95f + verticalAdd;
 		timerList.add(life);
+		updateImage(0);
 	}
 
 	@Override

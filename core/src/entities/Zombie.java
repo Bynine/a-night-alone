@@ -15,6 +15,7 @@ public class Zombie extends Monster {
 		stunTimer.setTime(120);
 
 		if (Main.hardMode){
+			setup("sprites/zombiehard.PNG", "sprites/zombiestunhard.PNG");
 			radius = (radius * 3)/2;
 			airSpeed = 0.5f;
 			airSpeed += (.5f + Math.random())/10;

@@ -16,11 +16,12 @@ public class Foul extends Monster {
 		stunTimer.setTime(90);
 		
 		if (Main.hardMode){
-			radius = radius * 8;
+			setup("sprites/blackhard.PNG", "sprites/blackstunhard.PNG");
+			//radius = radius * 8;
 			airSpeed = 1.28f;
 			airSpeed += (.5f + Math.random())/10;
 			jumpTimer.setTime(8);
-			stunTimer.setTime(60);
+			stunTimer.setTime(80);
 		}
 	}
 

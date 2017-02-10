@@ -7,9 +7,15 @@ import com.badlogic.gdx.graphics.Texture;
 public class Cutscene_Ending extends Cutscene{
 	
 	public Cutscene_Ending(){
+		super();
+		cutsceneMusic = Gdx.audio.newMusic(Gdx.files.internal("music/house.mp3"));
 		sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/ending1.PNG")), null));
 		sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/ending2.PNG")), null));
-		//sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/ending3.PNG")), null));
+		sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/ending3.PNG")), null));
+		if (Main.hardMode){
+			sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/ending4.PNG")), null));
+			sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/ending5.PNG")), null));
+		}
 	}
 	
 	@Override

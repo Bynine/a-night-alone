@@ -6,16 +6,18 @@ import nw.Main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import nw.Timer;
 
 public class Player extends Entity{
-	
+
 	Main nw;
 
 	private float health = 3;
@@ -29,6 +31,7 @@ public class Player extends Entity{
 	private float noZone = .1f;
 	boolean landed = true;
 	private Animation walk = makeAnimation("sprites/playersheet.PNG", 4, 1, 10f, PlayMode.LOOP);
+	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/playercrouch.PNG")));
 
 	public Player(Main nightWalk){
 		super(16, 216);
@@ -44,7 +47,7 @@ public class Player extends Entity{
 		collision = Collision.CREATURE;
 		timerList.add(invincible);
 		timerList.add(jumpTimer);
-		
+
 		jumpStrength = 5.3f;
 		gravity = -0.32f;
 		runSpeed = 0.3f;
@@ -58,7 +61,7 @@ public class Player extends Entity{
 			else nw.transition(p.getRoom(), p.getDestination(this), false);
 		}
 	}
-	
+
 	public void prepJump(){
 		if (jumpTimer.timeUp()) jumpTimer.restart();
 	}
@@ -82,19 +85,17 @@ public class Player extends Entity{
 
 	@Override
 	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime){
+		System.out.println(state);
 		super.update(f, rectangleList, entityList, p, deltaTime);
 		for (Entity e: entityList) checkPortal(e);
 		if (isAerial()) state = State.AIR;
 		else if (Math.abs(velocity.x) > 0.1) state = State.RUN;
 		else state = State.STAND;
 
-		if (state == State.RUN) setAnimation(walk, deltaTime);
-		else setImage(image);
-		
 		if (isGrounded() && !jumpTimer.timeUp()) jump();
 
 		if (isAerial()) landed = false;
-		
+
 		if (health < MAXHEALTH) health += recovery;
 	}
 
@@ -107,8 +108,9 @@ public class Player extends Entity{
 
 	@Override
 	protected void handleMovement(float f){
+		if (state == State.CROUCH && isGrounded()) velocity.x *= Math.pow(friction, 1.5f);
 		if (Math.abs(f) < deadZone) return;
-		if (state == State.RUN && isGrounded()) velocity.x += f * getRunSpeed();
+		else if (state == State.RUN && isGrounded()) velocity.x += f * getRunSpeed();
 		else velocity.x += f * airSpeed;
 	}
 
@@ -116,10 +118,15 @@ public class Player extends Entity{
 		if (velocity.y > 0)  velocity.y = 0;
 		position.x = startPosition.x;	
 		position.y = startPosition.y;
-		updateImage();
+		updateImage(0);
 	}
 
 	public void hurt(float damage, Monster m) { 
+		if (m instanceof Ghost){
+			health -= damage;
+			// softer hurt noise - drain noise?
+			return;
+		}
 		int yKnockback = 1;
 		int xKnockback = 3;
 		if (invincible.timeUp()){
@@ -137,12 +144,27 @@ public class Player extends Entity{
 		velocity.x = 0;
 		velocity.y = 0;
 	}
-	
+
 	public void putCatOn(){
 		walk = makeAnimation("sprites/playersheetcat.PNG", 4, 1, 10f, PlayMode.LOOP);
 	}
 
 	public float getHealth() { return health; }
+
+	public void setCrouch(){
+		if (!isAerial()) state = State.CROUCH;
+	}
+
+	@Override
+	protected void updateImage(int deltaTime){
+		switch(state){
+		case RUN: setAnimation(walk, deltaTime); break;
+		case CROUCH: setImage(crouchImage); break;
+		default: setImage(image);
+		}
+		super.updateImage(deltaTime);
+	}
+
 
 }
 

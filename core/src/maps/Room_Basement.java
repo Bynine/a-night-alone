@@ -21,7 +21,7 @@ public class Room_Basement extends Room {
 		map = tmxMapLoader.load("maps/basement.tmx");
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/panic.mp3"));
 		r = 0.0f;
-		b = 0.15f;
+		b = 0.3f;
 		g = 0.1f;
 		a = 0.45f;
 	}
@@ -30,22 +30,22 @@ public class Room_Basement extends Room {
 	public void initEntities(Player player) {
 		super.initEntities(player);
 		entityList.add(new Foul(TILE*4, TILE*groundFloor));
-		entityList.add(new Slime(TILE*6, TILE*(groundFloor+10)));
-		entityList.add(new Slime(TILE*6, TILE*(groundFloor+15)));
 		entityList.add(new Foul(TILE*16, TILE*groundFloor));
-		entityList.add(new Slime(TILE*19, TILE*(groundFloor+8)));
+		entityList.add(new Foul(TILE*23, TILE*groundFloor));
 		entityList.add(new Foul(TILE*30, TILE*groundFloor));
-		entityList.add(new Slime(TILE*37, TILE*(groundFloor+5)));
 		entityList.add(new Foul(TILE*39, TILE*groundFloor));
 		entityList.add(new Foul(TILE*45, TILE*groundFloor));
 		
 		if (Main.hardMode){
 			entityList.add(new Foul(TILE*6, TILE*groundFloor));
-			entityList.add(new Foul(TILE*28, TILE*groundFloor));
 			entityList.add(new Foul(TILE*36, TILE*groundFloor));
 			entityList.add(new Foul(TILE*49, TILE*groundFloor));
+			entityList.add(new Slime(TILE*6, TILE*(groundFloor+10)));
+			entityList.add(new Slime(TILE*6, TILE*(groundFloor+15)));
+			entityList.add(new Slime(TILE*19, TILE*(groundFloor+8)));
 			entityList.add(new Slime(TILE*25, TILE*(groundFloor+7)));
 			entityList.add(new Slime(TILE*31, TILE*(groundFloor+6)));
+			entityList.add(new Slime(TILE*37, TILE*(groundFloor+5)));
 			entityList.add(new Slime(TILE*50, TILE*(groundFloor+10)));
 			entityList.add(new Foul(TILE*52, TILE*(groundFloor-5)));
 			entityList.add(new Foul(TILE*47, TILE*(groundFloor-6)));

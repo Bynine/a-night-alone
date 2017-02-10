@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
@@ -41,10 +42,10 @@ import cutscenes.Cutscene_Intro;
 public class Main extends ApplicationAdapter implements InputProcessor, ControllerListener {
 
 	/* DEBUG */
-	private final int startRoom = 3; // FINAL: 0
+	private final int startRoom = 0; // FINAL: 0
 	public static boolean gotCat = false; // FINAL: false
-	public static boolean hardMode = true; // FINAL: false
-	public final boolean mode_DEBUG = true; // FINAL: false
+	public static boolean hardMode = false; // FINAL: false
+	public static boolean debug = true; // FINAL: false
 	/* GRAPHICS */
 	private SpriteBatch batch;
 	private Player player;
@@ -53,10 +54,11 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	private static final float ZOOM = 1/3f;
 	private OrthogonalTiledMapRenderer renderer;
 	Texture border, bigBorder, tint, clouds, eye, pupil, pupilShader,
-	dead, deadleft, keyboardControls, controllerControls, pressJumpToBegin, nextButton,
-	shredBase, shred1, shred2, shred3, shred4, credits, creditsHard;
+	dead, deadleft, keyboardControls, controllerControls, pressJumpToBegin,
+	shredBase, shred1, shred2, shred3, shred4, credits, creditsHard, logo;
 	TextureRegion bossBorder, creditPet;
-	Animation bossAnim, creditPetEasy, creditPetHard;
+	Animation bossAnim, nextButtonK, nextButtonC, creditPetEasy, creditPetHard;
+	static Sound shredReveal;
 	private final float blackR = (float)21/255;
 	private final float blackG = (float)34/255;
 	private final float blackB = (float)43/255;
@@ -84,7 +86,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	Cutscene cutsceneIntro;
 	static Cutscene activeCutscene;
 	/* TIMERS */
-	private final Timer fireCooldown = new Timer(15, false);
+	private final Timer fireCooldown = new Timer(14, false);
 	private final Timer transition = new Timer(20, false);
 	private final Timer transition2 = new Timer(2, false);
 	private final Timer deathLength = new Timer(200, false);
@@ -101,8 +103,10 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 
 	@Override public void create () {
 		bossAnim = Entity.makeAnimation("sprites/bossbordersheet.PNG", 4, 1, 10f, PlayMode.LOOP);
-		creditPetEasy = Entity.makeAnimation("sprites/ending pet 1.PNG", 2, 1, 20f, PlayMode.LOOP);
-		creditPetHard = Entity.makeAnimation("sprites/ending pet 2.PNG", 2, 1, 20f, PlayMode.LOOP);
+		creditPetEasy = Entity.makeAnimation("sprites/ending pet 1.PNG", 2, 1, 40f, PlayMode.LOOP);
+		creditPetHard = Entity.makeAnimation("sprites/ending pet 2.PNG", 2, 1, 40f, PlayMode.LOOP);
+		nextButtonK = Entity.makeAnimation("sprites/nextarrow.PNG", 2, 1, 20f, PlayMode.LOOP);
+		nextButtonC = Entity.makeAnimation("sprites/nextarrowc.PNG", 2, 1, 20f, PlayMode.LOOP);
 
 		border = new Texture(Gdx.files.internal("sprites/border.PNG"));
 		bigBorder = new Texture(Gdx.files.internal("sprites/bigborder.PNG"));
@@ -116,7 +120,6 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		keyboardControls = new Texture(Gdx.files.internal("scenes/kcontrols.PNG"));
 		controllerControls = new Texture(Gdx.files.internal("scenes/ccontrols.PNG")); 
 		pressJumpToBegin = new Texture(Gdx.files.internal("scenes/pressjumptobegin.PNG")); 
-		nextButton = new Texture(Gdx.files.internal("sprites/nextarrow.PNG"));
 		credits = new Texture(Gdx.files.internal("sprites/credits.PNG"));
 		creditsHard = new Texture(Gdx.files.internal("sprites/creditshard.PNG"));
 		shredBase = new Texture(Gdx.files.internal("scenes/scrapbase.PNG"));
@@ -124,9 +127,12 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		shred2 = new Texture(Gdx.files.internal("scenes/scrap2.PNG"));
 		shred3 = new Texture(Gdx.files.internal("scenes/scrap3.PNG"));
 		shred4 = new Texture(Gdx.files.internal("scenes/scrap4.PNG"));
+		logo = new Texture(Gdx.files.internal("sprites/logo.PNG"));
 
 		bossBorder = new Sprite(bossAnim.getKeyFrame(0));
 		creditPet = new Sprite(creditPetEasy.getKeyFrame(0));
+
+		shredReveal = Gdx.audio.newSound(Gdx.files.internal("sfx/mystery.wav"));
 
 		heartBeat = Gdx.audio.newMusic(Gdx.files.internal("music/heartbeat reverb.mp3"));
 		heartBeat.setLooping(true);
@@ -144,7 +150,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		startGame();
 		gameState = GameState.CONTROLS;
 
-		if (mode_DEBUG) gameState = GameState.GAME;
+		if (debug) gameState = GameState.GAME;
 	}
 
 	void startGame(){
@@ -153,12 +159,12 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		activeLevel = new Level_Main();
 		activeRoom = activeLevel.getRoom(startRoom);
 		map = activeRoom.getMap();
-		
+
 		Gdx.gl.glClearColor(blackR, blackG, blackB, 1);
 		cam.setToOrtho(false, SCREENWIDTH, SCREENHEIGHT);
 		cam.zoom = ZOOM;
 		changeRoom(activeRoom, activeRoom.getStartPosition());
-		
+
 		heartBeat.setVolume(heartVolume);
 		activeRoom.getMusic().setVolume(volume);
 		heartBeat.play();
@@ -220,11 +226,13 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		float posY = cam.position.y - (ZOOM*SCREENHEIGHT/2);
 		if (controlType == ControlType.KEYBOARD) batch.draw(keyboardControls, posX, posY);
 		else if (controlType == ControlType.CONTROLLER) batch.draw(controllerControls, posX, posY);
-		if (controlLength.timeUp()) batch.draw(pressJumpToBegin, posX + (ZOOM*SCREENWIDTH/2) - pressJumpToBegin.getWidth()/2, posY + TILE*2);
+		batch.draw(logo, posX, posY+2);
+		if (controlLength.timeUp()) batch.draw(pressJumpToBegin, posX + (ZOOM*SCREENWIDTH/2) - pressJumpToBegin.getWidth()/2, posY + TILE*4);
 		batch.end();
 	}
 
 	void renderCutscene(){
+		if (finalChase.isPlaying()) finalChase.stop();
 		activeCutscene.updateCutscene();
 		batch.begin();
 		batch.draw(activeCutscene.getScene().getImage(), lowerLeftX(), lowerLeftY());
@@ -232,7 +240,10 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		renderBorder(true);
 		if (activeCutscene.sceneTimer.timeUp()) {
 			batch.begin();
-			batch.draw(nextButton, lowerLeftX() - TILE, lowerLeftY() - TILE);
+			if (controlType == ControlType.KEYBOARD) batch.draw(nextButtonK.getKeyFrame(deltaTime), 
+					lowerLeftX() - TILE, lowerLeftY() - TILE);
+			if (controlType == ControlType.CONTROLLER) batch.draw(nextButtonC.getKeyFrame(deltaTime), 
+					lowerLeftX() - TILE, lowerLeftY() - TILE);
 			batch.end();
 		}
 	}
@@ -240,13 +251,13 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	void renderShreds(){
 		if (shredLength.timeUp()) setGameState(GameState.CREDITS);
 		if (!hardMode){
-		batch.begin();
-		batch.draw(shredBase, lowerLeftX(), lowerLeftY());
-		if (gotShred1) batch.draw(shred1, lowerLeftX(), lowerLeftY());
-		if (gotShred2) batch.draw(shred2, lowerLeftX(), lowerLeftY());
-		if (gotShred3) batch.draw(shred3, lowerLeftX(), lowerLeftY());
-		if (gotShred4) batch.draw(shred4, lowerLeftX(), lowerLeftY());
-		batch.end();
+			batch.begin();
+			batch.draw(shredBase, lowerLeftX(), lowerLeftY());
+			if (gotShred1) batch.draw(shred1, lowerLeftX(), lowerLeftY());
+			if (gotShred2) batch.draw(shred2, lowerLeftX(), lowerLeftY());
+			if (gotShred3) batch.draw(shred3, lowerLeftX(), lowerLeftY());
+			if (gotShred4) batch.draw(shred4, lowerLeftX(), lowerLeftY());
+			batch.end();
 		}
 		renderBorder(true);
 	}
@@ -256,21 +267,21 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	boolean creditsStarted = false;
 
 	void renderCredits(){
-		
+
 		if (!creditsStarted) {
 			creditPosX = lowerLeftX();
 			creditsStarted = true;
 		}
-		
+
 		creditPosX = MathUtils.clamp(creditPosX -= creditSpeed, -(credits.getWidth()) + lowerLeftX() + TILE*15, lowerLeftX()); 
 		batch.begin();
-		
+
 		if (hardMode) {
 			batch.draw(creditPetHard.getKeyFrame(deltaTime), 
 					lowerLeftX() - TILE*2 + SCREENWIDTH*ZOOM/2 - creditPet.getRegionWidth()/2, lowerLeftY() + TILE*7);
 			batch.draw(creditsHard, creditPosX, lowerLeftY());
 		}
-		
+
 		else {
 			batch.draw(creditPetEasy.getKeyFrame(deltaTime), 
 					lowerLeftX() - TILE*2 + SCREENWIDTH*ZOOM/2 - creditPet.getRegionWidth()/2, lowerLeftY() + TILE*7);
@@ -292,10 +303,13 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		Controllers.addListener(this);
 		controller = Controllers.getControllers().first();
 	}
+	
+	private float crouchCheck = 0.5f;
 
 	void handleControllerInput(){
 		signum = controller.getAxis(1);
-		if(Math.abs(controller.getAxis(1)) > deadZone){
+		checkDown(controller.getAxis(0) > crouchCheck);
+		 if(Math.abs(controller.getAxis(1)) > deadZone){
 			if (player.isGrounded()){
 				player.state = State.RUN; return;
 			}
@@ -322,9 +336,17 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		else if (Gdx.input.isKeyPressed(Keys.A)) signum = -1;
 		else if (Gdx.input.isKeyPressed(Keys.D)) signum =  1;
 		else if (!Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)) signum = 0;
+		checkDown(Gdx.input.isKeyPressed(Keys.S));
 
 		if (action) handleCommand(Command.JUMP);
 		if (Gdx.input.isKeyPressed(Keys.J)) handleCommand(Command.FIRE);
+	}
+	
+	private void checkDown(boolean b){ 
+		if (b) {
+			player.setCrouch();
+			signum = 0;
+		}
 	}
 
 	public boolean buttonDown(Controller controller, int buttonCode) {
@@ -425,8 +447,14 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 
 		if (activeRoom.clouds){ // render clouds
 			batch.begin();
-			batch.draw(clouds, (200+deltaTime)%2400, mapHeight-400);
-			batch.draw(clouds, (200+deltaTime)%2400 - 2400, mapHeight-400);
+			if (bossActive()){
+				batch.draw(clouds, (200+deltaTime*2)%2400, mapHeight-400);
+				batch.draw(clouds, (200+deltaTime*2)%2400 - 2400, mapHeight-400);
+			}
+			else{
+				batch.draw(clouds, (200+deltaTime)%2400, mapHeight-400);
+				batch.draw(clouds, (200+deltaTime)%2400 - 2400, mapHeight-400);
+			}
 			batch.end();
 		}
 
@@ -437,12 +465,22 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 
 		batch.begin();  // render normal entities
 		for (Entity e: activeRoom.getEntityList()){
-			if (!e.inFront) batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
+			if (!e.inFront && !(e instanceof Ghost)) batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 		}
 		batch.end();
 
 		arr = new int[]{numLayers-1};  // render foreground
 		renderer.render(arr);
+
+		batch.begin();  // render  ghosts
+		for (Entity e: activeRoom.getEntityList()){
+			if (e instanceof Ghost) {
+				Ghost g = (Ghost) e;
+				boolean doneAppearing = g.hauntTimer.timeUp();
+				if (deltaTime%8 > 4 || doneAppearing) batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
+			}
+		}
+		batch.end();
 
 		renderBorder(false);
 
@@ -539,7 +577,10 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	public void transition(Room room, Vector2 position, boolean isCutscene){
 		nextRoom = room;
 		nextPos = position;
-		if (isCutscene) gameState = GameState.CUTSCENE;
+		if (isCutscene) {
+			heartBeat.setVolume(0);
+			gameState = GameState.CUTSCENE;
+		}
 		else gameState = GameState.TRANSITION;
 		transition.restart();
 	}
@@ -591,6 +632,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 			if (hardMode) newGameState = GameState.CREDITS;
 			else{
 				stopAllMusic();
+				shredReveal.play();
 				shredLength.restart();
 			}
 		}
@@ -600,7 +642,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		}
 		gameState = newGameState;
 	}
-	
+
 	private static void stopAllMusic(){
 		activeRoom.getMusic().stop();
 		finalChase.stop();
@@ -622,7 +664,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	}
 
 	private enum ControlType { SELECT, CONTROLLER, KEYBOARD }
-	public enum GameState { GAME, TRANSITION, CUTSCENE, DEATH, CONTROLS, CREDITS, SHREDS }
+	public enum GameState { GAME, TRANSITION, CUTSCENE, DEATH, CONTROLS, CREDITS, SHREDS, TITLE }
 	private enum Command { LEFT, RIGHT, JUMP, FIRE }
 
 	public boolean buttonUp(Controller controller, int buttonCode) {

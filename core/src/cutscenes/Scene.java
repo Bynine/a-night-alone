@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 public class Scene {
 	private Texture image;
 	private Sound sfx;
+	public boolean playedSound = false;
 	
 	Scene(Texture image, Sound sfx){
 		this.image = image;
@@ -18,5 +19,10 @@ public class Scene {
 	
 	public Sound getSFX(){
 		return sfx;
+	}
+
+	public void playSound() {
+		sfx.play();
+		playedSound = true;
 	}
 }

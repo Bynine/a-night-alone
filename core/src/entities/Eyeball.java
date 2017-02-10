@@ -17,14 +17,15 @@ public class Eyeball extends Monster{
 		damage = 0.45f;
 		jumpTimer.setTime(60);
 		stunTimer.setTime(120);
+		touchRadius = 8;
 		
 		if (Main.hardMode){
-			damage = 1.8f;
+			damage = 1.5f;
 			setup("sprites/hardeyesheet.PNG", "sprites/eyestun.PNG");
 		}
 		
 		flip();
-		updateImage();
+		updateImage(0);
 		inFront = true;
 		collision = Collision.GHOST;
 		gravity = 0;
