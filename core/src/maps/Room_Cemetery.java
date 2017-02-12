@@ -67,6 +67,7 @@ public class Room_Cemetery extends Room {
 			entityList.add(new Zombie(TILE*14, TILE*34));
 			entityList.add(new Zombie(TILE*38, TILE*37));
 			entityList.add(new Slime(TILE*55, TILE*31));
+			entityList.add(new Dog(TILE*54, TILE*31));
 			entityList.add(new Zombie(TILE*55, TILE*41));
 			entityList.add(new Zombie(TILE*72, TILE*49));
 			entityList.add(new Zombie(TILE*75, TILE*44));
@@ -76,6 +77,7 @@ public class Room_Cemetery extends Room {
 			entityList.add(new Unbreakable(TILE*18, TILE*33));
 			entityList.add(new Unbreakable(TILE*26, TILE*32));
 			entityList.add(new Unbreakable(TILE*26, TILE*33));
+			entityList.add(new Unbreakable(TILE*47, TILE*45));
 		}
 		
 	}

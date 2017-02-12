@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 import entities.Foul;
-import entities.Ghost;
 import entities.Player;
 import entities.Portal;
 import entities.Slime;

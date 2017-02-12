@@ -45,7 +45,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	private final int startRoom = 0; // FINAL: 0
 	public static boolean gotCat = false; // FINAL: false
 	public static boolean hardMode = false; // FINAL: false
-	public static boolean debug = true; // FINAL: false
+	public static boolean debug = false; // FINAL: false
 	/* GRAPHICS */
 	private SpriteBatch batch;
 	private Player player;
@@ -58,7 +58,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	shredBase, shred1, shred2, shred3, shred4, credits, creditsHard, logo;
 	TextureRegion bossBorder, creditPet;
 	Animation bossAnim, nextButtonK, nextButtonC, creditPetEasy, creditPetHard;
-	static Sound shredReveal;
+	static Sound collect, finalCollect, shredReveal;
 	private final float blackR = (float)21/255;
 	private final float blackG = (float)34/255;
 	private final float blackB = (float)43/255;
@@ -133,6 +133,8 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		creditPet = new Sprite(creditPetEasy.getKeyFrame(0));
 
 		shredReveal = Gdx.audio.newSound(Gdx.files.internal("sfx/mystery.wav"));
+		collect = Gdx.audio.newSound(Gdx.files.internal("sfx/collect2.wav"));
+		finalCollect = Gdx.audio.newSound(Gdx.files.internal("sfx/collect3.wav"));
 
 		heartBeat = Gdx.audio.newMusic(Gdx.files.internal("music/heartbeat reverb.mp3"));
 		heartBeat.setLooping(true);
@@ -291,25 +293,20 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		renderBorder(true);
 	}
 
-	float lowerLeftX(){
-		return cam.position.x + (TILE*2) - (SCREENWIDTH*ZOOM)/2;
-	}
+	float lowerLeftX(){ return cam.position.x + (TILE*2) - (SCREENWIDTH*ZOOM)/2; }
 
-	float lowerLeftY(){
-		return cam.position.y + (TILE*2) - (SCREENHEIGHT*ZOOM)/2;
-	}
+	float lowerLeftY(){ return cam.position.y + (TILE*2) - (SCREENHEIGHT*ZOOM)/2; }
 
 	void setupController(){
 		Controllers.addListener(this);
 		controller = Controllers.getControllers().first();
 	}
-	
-	private float crouchCheck = 0.5f;
+
+	private float crouchCheck = 0.7f;
 
 	void handleControllerInput(){
 		signum = controller.getAxis(1);
-		checkDown(controller.getAxis(0) > crouchCheck);
-		 if(Math.abs(controller.getAxis(1)) > deadZone){
+		if(Math.abs(controller.getAxis(1)) > deadZone){
 			if (player.isGrounded()){
 				player.state = State.RUN; return;
 			}
@@ -336,17 +333,20 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		else if (Gdx.input.isKeyPressed(Keys.A)) signum = -1;
 		else if (Gdx.input.isKeyPressed(Keys.D)) signum =  1;
 		else if (!Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)) signum = 0;
-		checkDown(Gdx.input.isKeyPressed(Keys.S));
 
 		if (action) handleCommand(Command.JUMP);
 		if (Gdx.input.isKeyPressed(Keys.J)) handleCommand(Command.FIRE);
 	}
-	
-	private void checkDown(boolean b){ 
-		if (b) {
-			player.setCrouch();
-			signum = 0;
+
+	private boolean checkDown(){ 
+		boolean downHeld = false;
+		if (controlType == ControlType.KEYBOARD) downHeld = (Gdx.input.isKeyPressed(Keys.S));
+		else if (controlType == ControlType.CONTROLLER) downHeld = (controller.getAxis(0) > crouchCheck);
+		if (downHeld){
+			boolean cantCrouch = player.setCrouch();
+			if (cantCrouch) signum = 0;
 		}
+		return downHeld;
 	}
 
 	public boolean buttonDown(Controller controller, int buttonCode) {
@@ -430,7 +430,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		Iterator<Entity> entityIter = activeRoom.getEntityList().iterator();
 		while (entityIter.hasNext()){
 			Entity e = entityIter.next();
-			e.update(signum, rectangleList, activeRoom.getEntityList(), player, deltaTime);
+			e.update(signum, rectangleList, activeRoom.getEntityList(), player, deltaTime, checkDown());
 			if ( e.isOOB(mapWidth, mapHeight) || e.toRemove() ) entityIter.remove();
 		}
 		if (player.getHealth() <= 0){
@@ -462,10 +462,16 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		arr = new int[numLayers];
 		for (int i = 0; i < arr.length; ++i) arr[i] = i+1;
 		renderer.render(arr);
+		
+		batch.begin();  // render background entities
+		for (Entity e: activeRoom.getEntityList()){
+			if (e instanceof Window) batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
+		}
+		batch.end();
 
 		batch.begin();  // render normal entities
 		for (Entity e: activeRoom.getEntityList()){
-			if (!e.inFront && !(e instanceof Ghost)) batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
+			if (!e.inFront && !(e instanceof Ghost || e instanceof Window)) batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 		}
 		batch.end();
 
@@ -550,7 +556,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	}
 
 	private void fire(){
-		if (fireCooldown.timeUp()){
+		if (fireCooldown.timeUp() && !player.isCrouching()){
 			fireCooldown.restart();
 			Projectile p = new Projectile(player);
 			activeRoom.addEntity(p);
@@ -615,7 +621,10 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		player.reset();
 		try { activeLevel = activeLevel.getClass().newInstance(); }
 		catch (InstantiationException | IllegalAccessException e) { e.printStackTrace(); }
-		if (gotCat) changeRoom(activeLevel.getRoom(5), activeLevel.getRoom(5).getStartPosition());
+		if (gotCat) {
+			changeRoom(activeLevel.getRoom(4), activeLevel.getRoom(4).getStartPosition());
+			player.direction = Direction.LEFT;
+		}
 		else changeRoom(activeLevel.getRoom(0), activeLevel.getRoom(0).getStartPosition());
 	}
 
@@ -661,19 +670,16 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 		case 4: gotShred4 = true; break;
 		default: break;
 		}
+		if (gotShred1 && gotShred2 && gotShred3 && gotShred4) finalCollect.play(0.52f);
+		else collect.play(0.5f);
 	}
 
 	private enum ControlType { SELECT, CONTROLLER, KEYBOARD }
 	public enum GameState { GAME, TRANSITION, CUTSCENE, DEATH, CONTROLS, CREDITS, SHREDS, TITLE }
 	private enum Command { LEFT, RIGHT, JUMP, FIRE }
 
-	public boolean buttonUp(Controller controller, int buttonCode) {
-		return false;
-	}
-	public boolean axisMoved(Controller controller, int axisCode, float value) {
-		return false;
-	}
-
+	public boolean buttonUp(Controller controller, int buttonCode) { return false; }
+	public boolean axisMoved(Controller controller, int axisCode, float value) { return false; }
 	public void connected(Controller controller) { }
 	public void disconnected(Controller controller) { }
 	public boolean povMoved(Controller controller, int povCode, PovDirection value) { return false; }

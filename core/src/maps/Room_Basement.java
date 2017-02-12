@@ -8,6 +8,7 @@ import entities.Foul;
 import entities.Player;
 import entities.Portal;
 import entities.Slime;
+import entities.Unbreakable;
 
 public class Room_Basement extends Room {
 	
@@ -16,8 +17,8 @@ public class Room_Basement extends Room {
 
 	public Room_Basement(Level superLevel) {
 		super(superLevel);
-		startPosition.x = TILE * 48;
-		startPosition.y = TILE * 15;
+		startPosition.x = TILE * 70;
+		startPosition.y = TILE * (groundFloor-5);
 		map = tmxMapLoader.load("maps/basement.tmx");
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/panic.mp3"));
 		r = 0.0f;
@@ -47,8 +48,14 @@ public class Room_Basement extends Room {
 			entityList.add(new Slime(TILE*31, TILE*(groundFloor+6)));
 			entityList.add(new Slime(TILE*37, TILE*(groundFloor+5)));
 			entityList.add(new Slime(TILE*50, TILE*(groundFloor+10)));
-			entityList.add(new Foul(TILE*52, TILE*(groundFloor-5)));
-			entityList.add(new Foul(TILE*47, TILE*(groundFloor-6)));
+			entityList.add(new Foul(TILE*46, TILE*(groundFloor-5)));
+			entityList.add(new Foul(TILE*50, TILE*(groundFloor-5)));
+			entityList.add(new Foul(TILE*54, TILE*(groundFloor-5)));
+		}
+		
+		else{
+			entityList.add(new Unbreakable(TILE*54, TILE*(groundFloor-5)));
+			entityList.add(new Unbreakable(TILE*54, TILE*(groundFloor-4)));
 		}
 		
 		entityList.add(new Portal(TILE*6, TILE*ceiling, superLevel.getRoom(3), TILE*7, TILE*21));

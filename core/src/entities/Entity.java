@@ -21,13 +21,14 @@ public abstract class Entity {
 	protected final Vector2 position = new Vector2();
 	protected final Vector2 velocity = new Vector2();
 	public State state;
-	protected Direction direction = Direction.RIGHT;
+	public Direction direction = Direction.RIGHT;
 	protected Sprite image;
 	protected float gravity = -0.4f;
 	protected float jumpStrength = 6f;
 	protected float runSpeed = 0.32f;
 	protected float airSpeed = 0.31f;
 	protected float friction = 0.87f;
+	protected float crouchFriction = 0.75f;
 	protected Collision collision;
 	protected final int collisionCheck = 4;
 	protected final float softening = .8f;
@@ -42,7 +43,7 @@ public abstract class Entity {
 		position.y = posY;
 	}
 
-	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime){
+	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime, boolean down){
 		handleDirection(f);
 		handleMovement(f);
 		limitingForces(rectangleList, entityList);
@@ -87,7 +88,8 @@ public abstract class Entity {
 
 	protected void limitingForces(List<Rectangle> mapRectangleList, List<Entity> entityList){
 		velocity.y += gravity;
-		velocity.x *= friction;
+		if (state == State.CROUCH) velocity.x *= crouchFriction; 
+		else velocity.x *= friction;
 		if (velocity.y < terminalVelocity) velocity.y = terminalVelocity;
 		setupRectangles(mapRectangleList, entityList);
 		checkWalls();
@@ -129,13 +131,18 @@ public abstract class Entity {
 		boolean ignoreRectangle;
 		for (Rectangle r : tempRectangleList){
 			ignoreRectangle = false;
-			Rectangle thisR = image.getBoundingRectangle();
-			thisR.setX(x);
-			thisR.setY(y);
+			Rectangle thisR = getHurtBox(x, y);
 			if (r.getHeight() <= 1 && r.getY() - this.getPosition().y > 0) ignoreRectangle = true;
 			if (!ignoreRectangle && Intersector.overlaps(thisR, r) && thisR != r) return true;
 		}
 		return false;
+	}
+	
+	protected Rectangle getHurtBox(float x, float y){
+		Rectangle r = image.getBoundingRectangle();
+		r.setX(x);
+		r.setY(y);
+		return r;
 	}
 
 	public void flip(){
@@ -166,7 +173,13 @@ public abstract class Entity {
 	}
 	
 	protected void setImage(TextureRegion tr){
-		image.setRegion(tr);
+		boolean flipped = image.isFlipX();
+		float x = image.getX();
+		float y = image.getY();
+		image = new Sprite(tr);
+		image.setFlip(flipped, false);
+		image.setX(x);
+		image.setY(y);
 	}
 
 	protected int direct(){
@@ -220,12 +233,16 @@ public abstract class Entity {
 	public float getFriction() { return friction; }
 
 	public enum Direction{ LEFT, RIGHT }
-	public enum State{ STAND, RUN, AIR, CROUCH }
+	public enum State{ STAND, RUN, AIR, CROUCH, CROUCHAIR }
 	enum Collision{ SOLID, CREATURE, GHOST }
 
-	private final ArrayList<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.RUN)); 
-	private final ArrayList<State> aerialStates = new ArrayList<State>(Arrays.asList(State.AIR)); 
+	private final ArrayList<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.RUN, State.CROUCH)); 
+	private final ArrayList<State> aerialStates = new ArrayList<State>(Arrays.asList(State.AIR, State.CROUCHAIR)); 
+	private final ArrayList<State> crouchStates = new ArrayList<State>(Arrays.asList(State.CROUCH, State.CROUCHAIR)); 
 	public boolean isGrounded(){ return groundedStates.contains(state) && velocity.y == 0; }
-	public boolean isAerial(){ return aerialStates.contains(state) || velocity.y != 0; } // redundant with one another?
+	private final int aboveGround = 1;
+	public boolean isAerial(){ return aerialStates.contains(state) || 
+			(checkCollision(position.x, position.y + aboveGround) && checkCollision(position.x - 14, position.y + aboveGround)); }
+	public boolean isCrouching() { return crouchStates.contains(state); }
 
 }

@@ -45,6 +45,7 @@ public class Room_OutsideHouse extends Room{
 			homeSweetHome.doesCutscene();
 			homeSweetHome.getImage().set(new Sprite(new Texture(Gdx.files.internal("sprites/glow door.PNG"))));
 			entityList.add(homeSweetHome);
+			entityList.add(new Window(TILE*27, TILE*(baseLevel + 1)));
 		}
 	}
 

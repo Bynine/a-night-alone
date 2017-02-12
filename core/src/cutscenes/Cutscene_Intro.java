@@ -7,7 +7,7 @@ public class Cutscene_Intro extends Cutscene{
 	
 	public Cutscene_Intro(){
 		super();
-		cutsceneMusic = Gdx.audio.newMusic(Gdx.files.internal("music/house.mp3"));
+		cutsceneMusic = Gdx.audio.newMusic(Gdx.files.internal("music/house2.mp3"));
 		sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/beginning1.PNG")), null));
 		sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/beginning2.PNG")), null ));
 		sceneList.add(new Scene(new Texture(Gdx.files.internal("scenes/beginning3.PNG")), null ));

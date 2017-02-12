@@ -34,7 +34,7 @@ public class Room_Hill extends Room {
 		}
 		if (!Main.gotShred4 && !Main.hardMode) entityList.add(new Shred(TILE*40, TILE*14, 4));
 		
-		entityList.add(new Breakable(TILE*8, TILE*6));
+		entityList.add(new Breakable(TILE*7, TILE*6));
 		entityList.add(new Breakable(TILE*10, TILE*6));
 		entityList.add(new Breakable(TILE*42, TILE*26));
 		entityList.add(new Breakable(TILE*45, TILE*26));
@@ -47,13 +47,6 @@ public class Room_Hill extends Room {
 			entityList.add(new Zombie(TILE*35, TILE*14));
 			entityList.add(new Zombie(TILE*37, TILE*14));
 			entityList.add(new Zombie(TILE*39, TILE*14));
-//			entityList.add(new Zombie(TILE*13, TILE*7));
-//			entityList.add(new Zombie(TILE*18, TILE*11));
-//			entityList.add(new Slime(TILE*25, TILE*14));
-//			entityList.add(new Slime(TILE*31, TILE*14));
-//			entityList.add(new Zombie(TILE*27, TILE*19));
-//			entityList.add(new Zombie(TILE*43, TILE*26));
-//			entityList.add(new Zombie(TILE*38, TILE*26));
 		}
 		
 		entityList.add(new Portal(0, TILE*6, superLevel.getRoom(1), TILE*151, TILE*41));

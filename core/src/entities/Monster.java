@@ -62,21 +62,18 @@ public abstract class Monster extends Entity{
 	}
 
 	@Override
-	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime){		
+	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime, boolean b){		
 		reactToPlayer(p);
 		if (speedModTimer.timeUp()){
 			speedMod();
 			speedModTimer.restart();
 			buttTouchCounter = 0;
 		}
-		super.update(f, rectangleList, entityList, p, deltaTime);
+		super.update(f, rectangleList, entityList, p, deltaTime, false);
 		if (buttTouchCounter > 0) buttTouch = true;
 		else buttTouch = false;
 		
-		if (!stunTimer.timeUp()) {	
-			setImage(stunImage);
-			if (direction == Direction.LEFT) image.flip(true, false);
-		}
+		if (!stunTimer.timeUp()) setImage(stunImage);
 		else setAnimation(walk, deltaTime);
 	}
 

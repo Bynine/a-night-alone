@@ -27,9 +27,9 @@ public class Cat extends Entity {
 	}
 
 	@Override
-	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime){
+	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime, boolean b){
 		if (life.getTime() == 5) meow.play();
-		super.update(f, rectangleList, entityList, p, deltaTime);
+		super.update(f, rectangleList, entityList, p, deltaTime, false);
 		setAnimation(walk, deltaTime);
 		if (life.timeUp()) setRemove();
 		if (jump.timeUp()) {

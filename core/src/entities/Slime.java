@@ -8,7 +8,7 @@ public class Slime extends Monster {
 		super(posX, posY);
 		setup("sprites/slime.PNG", "sprites/slimestun.PNG");
 		airSpeed = 0.2f;
-		airSpeed += (.25f + Math.random())/15;
+		airSpeed += (.125f + Math.random())/25;
 		jumpStrength = 0;
 		damage = 0.5f;
 		jumpTimer.setTime(60);

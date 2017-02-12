@@ -26,18 +26,25 @@ public class Player extends Entity{
 	private Timer invincible = new Timer(30, false);
 	private Timer jumpTimer = new Timer(6, false);
 	private Sound hurtNoise = Gdx.audio.newSound(Gdx.files.internal("sfx/hurt.wav"));
-	private Sound landNoise = Gdx.audio.newSound(Gdx.files.internal("sfx/land4.wav"));
+	private Sound landNoise = Gdx.audio.newSound(Gdx.files.internal("sfx/land6.wav"));
 	private float deadZone = .5f;
-	private float noZone = .1f;
+	private float noZone = .2f;
 	boolean landed = true;
 	private Animation walk = makeAnimation("sprites/playersheet.PNG", 4, 1, 10f, PlayMode.LOOP);
 	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/playercrouch.PNG")));
+	private TextureRegion jumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/playerjump.PNG")));
+	private Sprite standImage;
 
 	public Player(Main nightWalk){
 		super(16, 216);
-		if (Main.gotCat) walk = makeAnimation("sprites/playersheetcat.PNG", 4, 1, 10f, PlayMode.LOOP);
+		if (Main.gotCat) {
+			walk = makeAnimation("sprites/playersheetcat.PNG", 4, 1, 10f, PlayMode.LOOP);
+			crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/playercrouchcat.PNG")));
+			jumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/playerjumpcat.PNG")));
+		}
 		nw = nightWalk;
 		image = new Sprite(walk.getKeyFrame(0));
+		standImage = new Sprite(walk.getKeyFrame(0));
 		position.x = TILE * 40;
 		position.y = TILE * 40;
 		velocity.x = 0;
@@ -51,7 +58,7 @@ public class Player extends Entity{
 		jumpStrength = 5.3f;
 		gravity = -0.32f;
 		runSpeed = 0.3f;
-		airSpeed = 0.3f;
+		airSpeed = 0.31f;
 	}
 
 	private void checkPortal(Entity e){
@@ -68,6 +75,7 @@ public class Player extends Entity{
 
 	@Override
 	public void jump(){
+		if (isCrouching()) return;
 		getVelocity().y += getJumpStrength();
 		state = State.AIR;
 		jumpTimer.stop();
@@ -84,19 +92,46 @@ public class Player extends Entity{
 	}
 
 	@Override
-	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime){
-		System.out.println(state);
-		super.update(f, rectangleList, entityList, p, deltaTime);
+	public void update(float f, List<Rectangle> rectangleList, List<Entity> entityList, Player p, int deltaTime, boolean down){
 		for (Entity e: entityList) checkPortal(e);
-		if (isAerial()) state = State.AIR;
+		
+		changeState(down);
+		makeHeadRoom();
+		
+		super.update(f, rectangleList, entityList, p, deltaTime, down);
+		
+		switch(state){
+		case RUN: setAnimation(walk, deltaTime); break;
+		case AIR: setImage(jumpImage); break;
+		case CROUCH: case CROUCHAIR: setImage(crouchImage); break;
+		default: setImage(standImage); break;
+		}
+		
+		if (isGrounded() && !jumpTimer.timeUp()) jump();
+		if (isAerial()) landed = false;
+		if (health < MAXHEALTH) health += recovery;
+		
+		System.out.println(state);
+	}
+	
+	void makeHeadRoom(){
+		boolean a = checkCollision(position.x, position.y + 16);
+		boolean b = checkCollision(position.x, position.y - 8);
+		if (state == State.STAND && a && !b){
+			state = State.CROUCHAIR;
+			setImage(crouchImage);
+		}
+	}
+	
+	void changeState(boolean down){
+		if (isAerial()) {
+			if (state == State.CROUCH) state = State.CROUCHAIR;
+			else state = State.AIR;
+			return;
+		}
+		else if ((state == State.CROUCH || state == State.CROUCHAIR) && down) return;
 		else if (Math.abs(velocity.x) > 0.1) state = State.RUN;
 		else state = State.STAND;
-
-		if (isGrounded() && !jumpTimer.timeUp()) jump();
-
-		if (isAerial()) landed = false;
-
-		if (health < MAXHEALTH) health += recovery;
 	}
 
 	@Override
@@ -108,8 +143,7 @@ public class Player extends Entity{
 
 	@Override
 	protected void handleMovement(float f){
-		if (state == State.CROUCH && isGrounded()) velocity.x *= Math.pow(friction, 1.5f);
-		if (Math.abs(f) < deadZone) return;
+		if (state == State.CROUCH || Math.abs(f) < deadZone) return;
 		else if (state == State.RUN && isGrounded()) velocity.x += f * getRunSpeed();
 		else velocity.x += f * airSpeed;
 	}
@@ -122,13 +156,12 @@ public class Player extends Entity{
 	}
 
 	public void hurt(float damage, Monster m) { 
-		if (m instanceof Ghost){
-			health -= damage;
-			// softer hurt noise - drain noise?
-			return;
+		float yKnockback = 1.2f;
+		float xKnockback = 3.6f;
+		if (isCrouching()){
+			yKnockback = 0.5f;
+			xKnockback = 1.5f;
 		}
-		int yKnockback = 1;
-		int xKnockback = 3;
 		if (invincible.timeUp()){
 			velocity.y += yKnockback;
 			if (m.getPosition().x < position.x) velocity.x = xKnockback;
@@ -151,20 +184,21 @@ public class Player extends Entity{
 
 	public float getHealth() { return health; }
 
-	public void setCrouch(){
+	public boolean setCrouch(){
 		if (!isAerial()) state = State.CROUCH;
+		else state = State.CROUCHAIR;
+		return !isAerial();
 	}
-
+	
 	@Override
-	protected void updateImage(int deltaTime){
-		switch(state){
-		case RUN: setAnimation(walk, deltaTime); break;
-		case CROUCH: setImage(crouchImage); break;
-		default: setImage(image);
-		}
-		super.updateImage(deltaTime);
+	protected Rectangle getHurtBox(float x, float y){
+		int thin = 2;
+		Rectangle r = image.getBoundingRectangle();
+		r.setWidth(r.getWidth() - thin);
+		r.setX(x + thin/2);
+		r.setY(y);
+		return r;
 	}
-
 
 }
 
