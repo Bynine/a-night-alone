@@ -54,9 +54,9 @@ public class Room_InsideChurch extends Room{
 		entityList.add(new Portal(TILE*57, 0, superLevel.getRoom(4), TILE*33, TILE*30));
 		entityList.add(new Portal(TILE*58, 0, superLevel.getRoom(4), TILE*33, TILE*30));
 		
-		entityList.add(new Portal(TILE*67, 0, superLevel.getRoom(4), TILE*49, TILE*30));
-		entityList.add(new Portal(TILE*68, 0, superLevel.getRoom(4), TILE*49, TILE*30));
-		entityList.add(new Portal(TILE*69, 0, superLevel.getRoom(4), TILE*49, TILE*30));
+		entityList.add(new Portal(TILE*67, 0, superLevel.getRoom(4), TILE*39, TILE*30));
+		entityList.add(new Portal(TILE*68, 0, superLevel.getRoom(4), TILE*40, TILE*30));
+		entityList.add(new Portal(TILE*69, 0, superLevel.getRoom(4), TILE*41, TILE*30));
 		
 		entityList.add(new Portal(TILE*94, 0, superLevel.getRoom(5), TILE*50, TILE*43));
 		entityList.add(new Portal(TILE*95, 0, superLevel.getRoom(5), TILE*50, TILE*43));

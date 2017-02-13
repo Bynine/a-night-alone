@@ -27,7 +27,7 @@ public class Breakable extends Entity{
 	@Override
 	protected void handleTouchHelper(Entity e){
 		if (isTouching(e, -1) && e instanceof Projectile){
-			breakNoise.play();
+			breakNoise.play(0.75f);
 			for (int i = 0; i < 5; ++i){
 				Main.addEntity(new Chunk(position.x + image.getWidth()/2, position.y + image.getHeight()/2));
 			}

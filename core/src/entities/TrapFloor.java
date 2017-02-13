@@ -40,7 +40,7 @@ public class TrapFloor extends Entity{
 		}
 		
 		if (life.timeUp()) {
-			breakNoise.play();
+			breakNoise.play(0.75f);
 			setRemove();
 		}
 	}

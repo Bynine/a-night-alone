@@ -38,8 +38,8 @@ public class Room_Catacombs extends Room {
 		entityList.add(new Foul(TILE*30, TILE*4));
 		entityList.add(new Foul(TILE*23, TILE*12));
 		entityList.add(new Foul(TILE*37, TILE*12));
-		entityList.add(new Slime(TILE*18, TILE*12));
-		entityList.add(new Slime(TILE*20, TILE*12));
+		entityList.add(new Slime(TILE*19, TILE*12));
+		entityList.add(new Slime(TILE*21, TILE*12));
 		entityList.add(new Foul(TILE*43, TILE*5));
 		entityList.add(new Foul(TILE*48, TILE*5));
 		entityList.add(new Foul(TILE*51, TILE*5));
@@ -52,11 +52,8 @@ public class Room_Catacombs extends Room {
 			
 			entityList.add(new Foul(TILE*27, TILE*17));
 			entityList.add(new Foul(TILE*29, TILE*17));
-//			entityList.add(new Foul(TILE*45, TILE*5));
-//			entityList.add(new Foul(TILE*50, TILE*5));
 			entityList.add(new Slime(TILE*11, TILE*8));
 			entityList.add(new Slime(TILE*13, TILE*8));
-//			entityList.add(new Ghost(TILE*30, TILE*30));
 			entityList.add(new Unbreakable(TILE*6, TILE*14));
 			entityList.add(new Unbreakable(TILE*7, TILE*14));
 		}
