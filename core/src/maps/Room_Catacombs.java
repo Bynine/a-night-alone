@@ -73,6 +73,9 @@ public class Room_Catacombs extends Room {
 		}
 		
 		else{
+			entityList.add(new Unbreakable(TILE*8, TILE*32));
+			entityList.add(new Unbreakable(TILE*8, TILE*33));
+			entityList.add(new Unbreakable(TILE*8, TILE*34));
 			entityList.add(new Unbreakable(TILE*54, TILE*7));
 			entityList.add(new Unbreakable(TILE*55, TILE*7));
 			entityList.add(new Unbreakable(TILE*56, TILE*7));

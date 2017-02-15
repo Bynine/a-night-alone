@@ -91,7 +91,7 @@ public class Main extends ApplicationAdapter implements InputProcessor, Controll
 	private final Timer transition2 = new Timer(2, false);
 	private final Timer deathLength = new Timer(200, false);
 	private final Timer controlLength = new Timer(30, true);
-	private final static Timer shredLength = new Timer(240, true);
+	private final static Timer shredLength = new Timer(300, true);
 	private final List<Timer> timerList = new ArrayList<Timer>
 	(Arrays.asList(fireCooldown, transition, transition2, deathLength, controlLength, shredLength));
 	/* MISC */

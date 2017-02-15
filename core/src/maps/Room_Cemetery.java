@@ -33,8 +33,8 @@ public class Room_Cemetery extends Room {
 		if (!Main.gotShred2 && !Main.hardMode) entityList.add(new Shred(TILE*72, TILE*48, 2));
 		
 		entityList.add(new Slime(TILE*20, TILE*41));
-		entityList.add(new Zombie(TILE*27, TILE*27));
-		entityList.add(new Zombie(TILE*23, TILE*27));
+		entityList.add(new Zombie(TILE*25, TILE*27));
+		entityList.add(new Zombie(TILE*22, TILE*27));
 		entityList.add(new Zombie(TILE*18, TILE*26));
 		entityList.add(new Slime(TILE*53, TILE*31));
 		entityList.add(new Slime(TILE*50, TILE*31));
@@ -54,6 +54,7 @@ public class Room_Cemetery extends Room {
 		b2.noGhosts();
 		entityList.add(b1);
 		entityList.add(b2);
+		entityList.add(new Breakable(TILE*46, TILE*47));
 		entityList.add(new Breakable(TILE*143, TILE*41));
 		
 		entityList.add(new Portal(0, TILE*43, superLevel.getRoom(0), TILE*67, TILE*13));
